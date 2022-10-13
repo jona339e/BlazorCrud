@@ -1,0 +1,108 @@
+﻿@page "/fetchdata"
+
+<PageTitle>Weather forecast</PageTitle>
+
+@using BlazorCrud.Data
+@inject WeatherForecastService ForecastService
+
+<h1>Weather forecast</h1>
+
+<p>This component demonstrates fetching data from a service.</p>
+
+@if ( cont == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>WeaponRank</th>
+                <th>WeaponName</th>
+                <th>DropLocation</th>
+                <th>Ilvl</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (content a in )
+            {
+                <tr>
+                    <td>@a.weaponRank</td>
+                    <td>@a.weaponName</td>
+                    <td>@a.dropLocation</td>
+                    <td>@a.ilvl</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>CRUD</title>
+    </head>
+    <body>
+        <p>Here you can enter data into the database. All fields must be filled before submitting!</p>
+        <div class="container">
+            <div class="screen">
+                <div class="screen__content">
+                    <form class="add__data">
+
+                        <div class="input__field">
+                            <input type="number" @bind="@WeaponRank" @oninput="@OnRankEvent" class="data__input" placeholder="Weapon Rank" required>
+                            <input type="text" @bind="@WeaponName" @oninput="@OnNameEvent" class="data__input" placeholder="Weapon Name" required>
+                            <input type="text" @bind="@DropLocation" @oninput="@OnLocationEvent" class="data__input" placeholder="Drop Location" required>
+                            <input type="number" @bind="@Ilvl" @oninput="@OnIlvlEvent" class="data__input" placeholder="Item Level" required>
+                        </div>
+
+                        <button type="submit" @onclick="CreateUser">Submit Data</button>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+
+@code {
+    private string? WeaponRank = "1";
+    private string? WeaponName = "";
+    private string? DropLocation = "";
+    private string? Ilvl = "200";
+
+    content cont = new();
+    static List<content> contentList = new CrudData().ReadContent();
+
+    private void OnRankEvent(ChangeEventArgs changeEvent) 
+    {
+        WeaponRank = (string?)changeEvent.Value; // won't parse string to int so have to do it like this and then convert to int in the method where it is used
+    }    
+    private void OnNameEvent(ChangeEventArgs changeEvent)
+    {
+        WeaponName = (string?)changeEvent.Value;
+    } 
+    private void OnLocationEvent(ChangeEventArgs changeEvent)
+    {
+        DropLocation = (string?)changeEvent.Value;
+    }
+    private void OnIlvlEvent(ChangeEventArgs changeEvent)
+    {
+        Ilvl = (string?)changeEvent.Value;
+    }
+
+
+    private void CreateUser()
+    {
+        string s = new Data.CrudData(WeaponRank, WeaponName, DropLocation, Ilvl).CreateUser();
+        if (string.IsNullOrEmpty(s)) // TODO make it so if the string is empty an error is displayed on the website where it prints out inputs must be unique
+        {
+            Console.WriteLine(s);
+        }else
+        {
+            Console.WriteLine(s); // TODO make it so the string gets displayed on the website
+        }
+    }
+
+}
