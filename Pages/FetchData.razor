@@ -25,7 +25,7 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (content a in )
+            @foreach (content a in contList)
             {
                 <tr>
                     <td>@a.weaponRank</td>
@@ -51,13 +51,13 @@ else
                     <form class="add__data">
 
                         <div class="input__field">
-                            <input type="number" @bind="@WeaponRank" @oninput="@OnRankEvent" class="data__input" placeholder="Weapon Rank" required>
-                            <input type="text" @bind="@WeaponName" @oninput="@OnNameEvent" class="data__input" placeholder="Weapon Name" required>
-                            <input type="text" @bind="@DropLocation" @oninput="@OnLocationEvent" class="data__input" placeholder="Drop Location" required>
-                            <input type="number" @bind="@Ilvl" @oninput="@OnIlvlEvent" class="data__input" placeholder="Item Level" required>
+                            <td><input @bind="cont.weaponRank"/></td>
+                            <td><input @bind="cont.weaponName" /></td>
+                            <td><input @bind="cont.dropLocation" /></td>
+                            <td><input @bind="cont.ilvl" /></td>
                         </div>
 
-                        <button type="submit" @onclick="CreateUser">Submit Data</button>
+                        <button type="submit" @onclick="CreateWeapon">Submit Data</button>
 
                     </form>
                 </div>
@@ -67,42 +67,16 @@ else
 </html>
 
 @code {
-    private string? WeaponRank = "1";
-    private string? WeaponName = "";
-    private string? DropLocation = "";
-    private string? Ilvl = "200";
 
     content cont = new();
-    static List<content> contentList = new CrudData().ReadContent();
-
-    private void OnRankEvent(ChangeEventArgs changeEvent) 
-    {
-        WeaponRank = (string?)changeEvent.Value; // won't parse string to int so have to do it like this and then convert to int in the method where it is used
-    }    
-    private void OnNameEvent(ChangeEventArgs changeEvent)
-    {
-        WeaponName = (string?)changeEvent.Value;
-    } 
-    private void OnLocationEvent(ChangeEventArgs changeEvent)
-    {
-        DropLocation = (string?)changeEvent.Value;
-    }
-    private void OnIlvlEvent(ChangeEventArgs changeEvent)
-    {
-        Ilvl = (string?)changeEvent.Value;
-    }
+    List<content> contList = new CrudData().ReadContent();
 
 
-    private void CreateUser()
+    private void CreateWeapon()
     {
-        string s = new Data.CrudData(WeaponRank, WeaponName, DropLocation, Ilvl).CreateUser();
-        if (string.IsNullOrEmpty(s)) // TODO make it so if the string is empty an error is displayed on the website where it prints out inputs must be unique
-        {
-            Console.WriteLine(s);
-        }else
-        {
-            Console.WriteLine(s); // TODO make it so the string gets displayed on the website
-        }
+        new CrudData().CreateWeapon(cont);
+        cont = new();
+        contList = new CrudData().ReadContent();
     }
 
 }
